@@ -22,6 +22,6 @@ jobs:
         uses: cfngc4594/dep-sherpa@v1
         with:
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
-          openai-base-url: ${{ secrets.OPENAI_BASE_URL || vars.OPENAI_BASE_URL }}
-          model: ${{ secrets.OPENAI_MODEL || vars.OPENAI_MODEL }}
+          openai-base-url: ${{ vars.OPENAI_BASE_URL }}
+          model: ${{ vars.OPENAI_MODEL }}
           attempt-repair: "true"
