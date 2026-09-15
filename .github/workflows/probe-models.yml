@@ -1,0 +1,30 @@
+name: Probe models
+
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List models (v1 path)
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          BASE: https://ai2.us1.limitationlab.net
+        run: |
+          set -euo pipefail
+          echo "=== GET $BASE/v1/models ==="
+          curl -sS "$BASE/v1/models" -H "Authorization: Bearer $OPENAI_API_KEY" | tee /tmp/models-v1.json
+          echo
+          echo "=== GET $BASE/models ==="
+          curl -sS "$BASE/models" -H "Authorization: Bearer $OPENAI_API_KEY" | tee /tmp/models-root.json || true
+          echo
+          echo "=== grep gpt-4.1 ==="
+          grep -ioE "gpt-4[^\"]*" /tmp/models-v1.json /tmp/models-root.json 2>/dev/null | sort -u || true
+          echo "=== chat test gpt-4.1-mini (v1) ==="
+          curl -sS "$BASE/v1/chat/completions" \
+            -H "Authorization: Bearer $OPENAI_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"model\":\"gpt-4.1-mini\",\"messages\":[{\"role\":\"user\",\"content\":\"Say OK\"}],\"max_tokens\":16}" \
+            | tee /tmp/chat-mini.json
+          echo
