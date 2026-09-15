@@ -23,4 +23,5 @@ jobs:
         with:
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
           openai-base-url: ${{ secrets.OPENAI_BASE_URL }}
+          model: ${{ secrets.DEPSHERPA_MODEL }}
           attempt-repair: "true"
